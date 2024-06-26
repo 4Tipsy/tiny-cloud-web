@@ -29,7 +29,7 @@ const Header = () => {
 
 
       <div className="show-aside text-hlc border-r-2 border-glc center-div cursor-pointer hover:underline md:hidden" onClick={() => setShowAside(true)}>
-        <div className="text-center">{'< Menu'}</div>
+        <div className="text-center">{'Menu'}</div>
       </div>
 
 
@@ -68,7 +68,7 @@ const UserSection = () => {
 
   return (
     <div className="user-section center-div text-ntw h-full text-[length:var(--fz1)]">
-      <div className={clsx("user-wrapper flex items-center h-[60%]", user && "cursor-pointer hover:underline")}
+      <div className={clsx("user-wrapper flex flex-col md:flex-row items-center h-[60%]", user && "cursor-pointer hover:underline")}
       
       onClick={ () => user && setShowUserModal(true) }
       >
@@ -92,9 +92,9 @@ const UserSection = () => {
           /* if no user */:
           <>
             <div><UserIco className="h-[var(--fz1)] w-[var(--fz1)] hidden md:block"/></div>
-            <div className="ml-[0.5vw] hidden md:block hover:underline cursor-pointer" onClick={() => setShowLoginRegister('register')}>Register</div>
-            <pre className="text-[length:var(--fz1)] hidden lg:block"> / </pre>
-            <div className="ml-[0.5vw] mr-[1vw] hidden md:block hover:underline cursor-pointer" onClick={() => setShowLoginRegister('login')}>Sign-in</div>
+            <div className="ml-[0.5vw] hover:underline cursor-pointer" onClick={() => setShowLoginRegister('register')}>Register</div>
+            <pre className="text-[length:var(--fz1)] hidden md:block"> / </pre>
+            <div className="ml-[0.5vw] mr-[1vw] hover:underline cursor-pointer" onClick={() => setShowLoginRegister('login')}>Sign-in</div>
           </>
         }
 
@@ -111,7 +111,7 @@ const UserSection = () => {
 const UserAvatar = () => {
 
   return (
-    <img src="https://klev.club/uploads/posts/2023-10/1697837805_klev-club-p-arti-anime-avatarki-50.jpg" alt="" 
+    <img src={window.SERVER_RAW_URL+'/api/user-service/get-user-img'} alt="" 
     className="w-[60px] aspect-square rounded-[50%] mr-5 border-2 border-ntw"/>
   )
 }

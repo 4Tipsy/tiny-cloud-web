@@ -1,19 +1,19 @@
 
 
 import clsx from "clsx"
-import { useAtom } from "jotai"
-import { useState , useEffect} from "react"
+import { useAtom, useAtomValue } from "jotai"
+import { useState, useEffect} from "react"
 
 // modules
 import { imgViewerContentState } from "../../states/Viewers"
-
+import { fileFieldState } from "../../states/FsPathState"
 
 
 
 
 const ImgViewer = () => {
 
-
+  const fileField = useAtomValue(fileFieldState)
   const [imgViewerContent, setImgViewerContent] = useAtom(imgViewerContentState)
 
   const [showZoom, setShowZoom] = useState(false)
@@ -32,6 +32,14 @@ const ImgViewer = () => {
 
 
 
+  let urlToImg: string
+  if (imgViewerContent) {
+
+    urlToImg = window.SERVER_RAW_URL+`/api/utils-service/download-img-via-get-route?abs_path=${imgViewerContent?.abs_path}&file_field=${fileField.toLowerCase()}`
+  } else {
+    urlToImg = ''
+  }
+
 
   return (
     <div
@@ -42,7 +50,8 @@ const ImgViewer = () => {
 
 
       <div className="max-w-[80%] max-h-[80%] object-contain center-div">
-        <img src={imgViewerContent?.previewUrl} alt={imgViewerContent?.name} className="max-h-full max-w-full"
+        <img alt={imgViewerContent?.name} className="max-h-full max-w-full"
+          src={urlToImg}
 
           onMouseEnter={ e => {
             setShowZoom(true)
@@ -96,7 +105,7 @@ const ImgViewer = () => {
         backgroundPositionX: `calc(${-zoomOnImgCords[0] * zoomLevel}px + ${zoomCssSize} / 2)`,
         backgroundPositionY: `calc(${-zoomOnImgCords[1] * zoomLevel}px + ${zoomCssSize} / 2)`,
 
-        backgroundImage: `url(${imgViewerContent?.previewUrl})`,
+        backgroundImage: `url(${urlToImg})`,
         backgroundSize: `${imgSize[0] * zoomLevel}px ${imgSize[1] * zoomLevel}px`,
       }}/>
 

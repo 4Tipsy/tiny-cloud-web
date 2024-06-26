@@ -11,8 +11,7 @@ import FsEntityModel from "../models/FsEntityModel"
 import { RenderModeType } from "./FileManager"
 import { fsPathState, fileFieldState } from "../../states/FsPathState"
 import ContextMenu from "./ContextMenu"
-import { imgViewerContentState, ImgViewerContentType } from "../../states/Viewers"
-import { imgPreviewCacheState } from "../../states/ImgPreviewCacheState"
+import { imgViewerContentState } from "../../states/Viewers"
 
 import makeDownloadReq from "./fsRequests/makeDownloadReq"
 import makeRenameReq from "./fsRequests/makeRenameReq"
@@ -28,13 +27,13 @@ import SharedIco from "../../assets/icons/shared-ico.svg?react"
 
 
 
-type FsEntityComponentProps = {renderMode: RenderModeType, forceRerender: Function} 
-                              & FsEntityModel
+type FsEntityComponentProps = {renderMode: RenderModeType, forceRerender: Function, fsEntity: FsEntityModel}
 
 
-const FsEntityComponent = ({renderMode, forceRerender, name, shared, abs_path: absPath, base_type: baseType, size_in_mb: sizeInMb, mime_type: mimeType}: FsEntityComponentProps) => {
+const FsEntityComponent = ({renderMode, forceRerender, fsEntity}: FsEntityComponentProps) => {
+  const {name, shared, abs_path: absPath, base_type: baseType, size_in_mb: sizeInMb, mime_type: mimeType} = fsEntity
 
-  const imgPreviewCache = useAtomValue(imgPreviewCacheState)
+
   const setImgViewerContent = useSetAtom(imgViewerContentState)
 
 
@@ -53,14 +52,7 @@ const FsEntityComponent = ({renderMode, forceRerender, name, shared, abs_path: a
     }
 
     if (baseType === 'file' && mimeType?.split('/')[0] === 'image') {
-
-      const previewUrl = imgPreviewCache.find(img => img.fileField===fileField && img.absPath===absPath)!.url
-      const imgViewerContent: ImgViewerContentType = {
-        name: name,
-        previewUrl: previewUrl,
-      }
-
-      setImgViewerContent(imgViewerContent)
+      setImgViewerContent(fsEntity)
     }
   }
 
@@ -122,7 +114,7 @@ const FsEntityComponent = ({renderMode, forceRerender, name, shared, abs_path: a
   if (renderMode === "tableLike") {
     return (
 
-      <div className="fs-entity grid grid-cols-[0_auto_auto_1fr] gap-[2%] py-[1vw] cursor-pointer hover:bg-[rgba(0,0,0,_0.2)] transition-colors"
+      <div className="fs-entity grid grid-cols-[0_auto_50%_auto_1fr] gap-[2%] py-[1vw] cursor-pointer hover:bg-[rgba(0,0,0,_0.2)] transition-colors"
         onClick={handleClick}
         onContextMenu={ e => { e.preventDefault(); e.stopPropagation(); setCords([e.pageX, e.pageY]); setShowContextMenu(true) }}
       >
@@ -133,7 +125,7 @@ const FsEntityComponent = ({renderMode, forceRerender, name, shared, abs_path: a
           <SharedIco className="absolute w-[65%] h-[65%] bottom-[-10%] right-[-10%]"/>}
         </div>
         
-        <div className="center-div text-[length:var(--fz2)] text-ntw text-ellipsis overflow-hidden">
+        <div className="flex items-center text-[length:var(--fz2)] text-ntw text-ellipsis overflow-hidden">
           {name}
         </div>
 
@@ -163,7 +155,8 @@ const FsEntityComponent = ({renderMode, forceRerender, name, shared, abs_path: a
 
       // if file (img!)
       : ( mimeType!.split('/')[0] === "image" && sizeInMb! < 5)
-      ? <ImagePreviewed className={className}/>
+      ? <img className={clsx(className, "object-contain text-ntw")} alt={name}
+      src={window.SERVER_RAW_URL+`/api/utils-service/download-img-via-get-route?abs_path=${absPath}&file_field=${fileField.toLowerCase()}`} />
 
       // if file (other)
       : <UsualFileSvg className={className}/>
@@ -171,19 +164,6 @@ const FsEntityComponent = ({renderMode, forceRerender, name, shared, abs_path: a
   }
 
 
-
-
-  function ImagePreviewed({className}: {className: string}) {
-      
-    const cachedImg = imgPreviewCache.find(img => img.fileField===fileField && img.absPath===absPath)
-    const imgUrl = cachedImg?.url || ""
-    
-
-
-    return (
-      <img className={clsx(className, "object-contain")} src={imgUrl} alt={name} />
-    )
-  }
 
 
 
@@ -218,8 +198,8 @@ const FsEntityComponent = ({renderMode, forceRerender, name, shared, abs_path: a
       return
     }
 
-    makeRenameReq(name, absPath, baseType, fileField, newName).then(()=> {
-      forceRerender()
+    makeRenameReq(name, absPath, baseType, fileField, newName).then( (res)=> {
+      res.ok && forceRerender()
     })
 
   }
@@ -232,8 +212,8 @@ const FsEntityComponent = ({renderMode, forceRerender, name, shared, abs_path: a
       return
     }
 
-    makeDeleteReq(name, absPath, baseType, fileField).then(()=> {
-      forceRerender()
+    makeDeleteReq(name, absPath, baseType, fileField).then( (res)=> {
+      res.ok && forceRerender()
     })
   }
 
@@ -249,6 +229,7 @@ const FsEntityComponent = ({renderMode, forceRerender, name, shared, abs_path: a
       if (res.ok) {
         const resBlob = await res.blob()
         download(resBlob)
+        forceRerender()
 
       } else {
         const resData = await res.json()

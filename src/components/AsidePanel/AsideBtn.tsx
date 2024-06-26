@@ -30,7 +30,7 @@ const AsideBtn = ({children, text, representedFileField}: AsideBtnProps) => {
 
   return (
     <div className={clsx("text-[length:var(--fz2)] flex flex-row text-ntw w-full cursor-pointer hover:underline", 
-    !user && "cursor-not-allowed",
+    !user && "!cursor-not-allowed",
     representedFileField===fileField && "!text-hlc")}
       onClick={() => user && setFileField(representedFileField)}
     >

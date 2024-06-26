@@ -2,20 +2,19 @@
 
 import { atom } from "jotai"
 
+import FsEntityModel from "../components/models/FsEntityModel"
 
 
 
-export type ImgViewerContentType = {
-  name: string,
-  previewUrl: string,
-}
 
 
-const _imgViewerContentState = atom<ImgViewerContentType | null>(null)
+
+
+const _imgViewerContentState = atom<FsEntityModel | null>(null)
 
 const imgViewerContentState = atom(
   get => get(_imgViewerContentState),
-  (_, set, newState: ImgViewerContentType | null ) => set(_imgViewerContentState, newState)
+  (_, set, newState: FsEntityModel | null ) => set(_imgViewerContentState, newState)
 )
 
 

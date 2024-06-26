@@ -2,8 +2,6 @@
 
 import { atom } from "jotai"
 
-import { _imgPreviewCacheState } from "./ImgPreviewCacheState"
-
 
 // possible values of fileField
 export enum FileFieldValues {
@@ -53,8 +51,6 @@ export const fsPathState = atom(
 
   (get, set, newState: string) => {
 
-    set(_imgPreviewCacheState, [])
-
     switch (get(fileFieldValue)) {
       case FileFieldValues.mere:
         set(fsPathInMereValue, newState)
@@ -81,5 +77,8 @@ export const fsPathState = atom(
 // fileField state
 export const fileFieldState = atom(
   get => get(fileFieldValue),
-  (_, set, newState: FileFieldValues) => { set(fileFieldValue, newState); set(_imgPreviewCacheState, []) }
+  (_, set, newState: FileFieldValues) => {
+    set(fileFieldValue, newState)
+    sessionStorage.setItem("fileField", newState)
+  }
 )

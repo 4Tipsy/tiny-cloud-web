@@ -1,7 +1,7 @@
 
 
 import clsx from "clsx"
-//import { Scrollbars } from 'react-custom-scrollbars-2'
+import { Scrollbars } from 'react-custom-scrollbars-2'
 import { useState, useEffect, useRef } from "react"
 import { useAtomValue, useSetAtom, useAtom } from "jotai"
 
@@ -17,10 +17,8 @@ import sortFsLayer from "./sortFsLayer"
 import ContextMenu from "./ContextMenu"
 
 import { filesToUploadState, showFileUploaderBoxState } from "../../states/FileUploaderState"
-import { imgPreviewCacheState, cachedImgPreview } from "../../states/ImgPreviewCacheState"
 
 import makeCreateFolderReq from "./fsRequests/makeCreateFolderReq"
-import makeDownloadReq from "./fsRequests/makeDownloadReq"
 
 // assets
 import CheckboxIco from "../../assets/icons/checkbox-ico.svg?react"
@@ -40,8 +38,6 @@ export enum ReqStatusValues {
 }
 
 const FileManager = () => {
-
-  const [imgPreviewCache, setImgPreviewCache] = useAtom(imgPreviewCacheState)
 
   const [renderMode, setRenderMode] = useState<RenderModeType>("cards")
 
@@ -133,7 +129,7 @@ const FileManager = () => {
           <RenderModeDropdown renderMode={renderMode} setRenderMode={setRenderMode}/>
 
 
-          <div className={clsx("new-btn center-div bg-hlc rounded-[10px] py-[0.65vw] cursor-pointer hover:underline relative", !user && "cursor-not-allowed")}
+          <div className={clsx("new-btn center-div bg-hlc rounded-[10px] py-[0.65vw] cursor-pointer hover:underline relative", !user && "!cursor-not-allowed")}
             onClick={ () => fileUploadTrigger.current?.click() }
           >
             <PlusIco/>
@@ -150,7 +146,7 @@ const FileManager = () => {
 
 
 
-
+      <Scrollbars renderThumbVertical={_ => <div className="bg-glc rounded"/>}>
       <div className="fs-manager-inner w-full flex-grow flex justify-center"
       onContextMenu={ e => {
         // if fs-layer loaded
@@ -173,6 +169,7 @@ const FileManager = () => {
 
         }
       </div>
+      </Scrollbars>
 
 
 
@@ -204,7 +201,7 @@ const FileManager = () => {
         {
           sortFsLayer(foldersFirst, sortBy, fsLayer).map((fsEntity: FsEntityModel) => {
             return (
-              <FsEntityComponent renderMode={renderMode} forceRerender={forceRerender} {...fsEntity} key={fsEntity.abs_path}/>
+              <FsEntityComponent renderMode={renderMode} forceRerender={forceRerender} fsEntity={fsEntity} key={fsEntity.abs_path}/>
             )
           })
         }
@@ -321,7 +318,6 @@ const FileManager = () => {
 
       if (res.ok) {
         // if ok
-        preloadImagesPreviews(resData.fs_layer)
         setRequestStatus(ReqStatusValues.success)
         setFsLayer(resData.fs_layer)
 
@@ -341,46 +337,6 @@ const FileManager = () => {
 
 
 
-
-
-  function preloadImagesPreviews(fsLayer_: FsEntityModel[]) {
-
-
-    if (imgPreviewCache.length > 0) {return}
-
-    
-
-    let newImgPreviewCache: cachedImgPreview[] = []
-    setImgPreviewCache([{fileField: '', absPath: '', url: ''}])
-    fsLayer_.forEach( en => {
-      
-
-      if (en.base_type === 'file') {
-        if (en.mime_type!.split('/')[0] === 'image') {
-
-          // download img and set src
-          makeDownloadReq(en.name, en.abs_path, 'file', fileField).then( async (res) => {
-            
-            const blob = await res.blob()
-            const url = URL.createObjectURL(blob)
-            
-
-            // add to cache
-            const newCachedImg = {
-              fileField: fileField,
-              absPath: en.abs_path,
-              url: url,
-            }
-            newImgPreviewCache.push(newCachedImg)
-          })
-        }
-      }
-
-      setImgPreviewCache(newImgPreviewCache)
-      forceRerender()
-
-    })
-  }
 
 
 

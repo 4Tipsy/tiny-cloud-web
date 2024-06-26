@@ -43,7 +43,7 @@ const FileUploader = () => {
           { filesToUpload &&
             Array.from(filesToUpload).map(file => {
               return (
-                <FileUploadComp file={file}/>
+                <FileUploadComp file={file} key={file.name+file.size}/>
               )
             })
           }
@@ -107,7 +107,7 @@ const FileUploader = () => {
         </div>
 
         {/*<input type="text" className="text-mg1 rounded w-[70%] pl-3 py-[3px]" value={fileName} onChange={ e => setFileName(e.currentTarget.value) } />*/}
-        <div className="w-[70%]">{file.name}</div>
+        {/* */}<div className="w-[70%]">{file.name}</div>
 
         <div className="text-ntw flex-grow">{prettifySize(file.size)}</div>
 

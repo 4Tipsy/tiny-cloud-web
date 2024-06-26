@@ -15,7 +15,7 @@ import ImgViewer from "./components/Viewers/ImgViewer"
 import DragAndDrop from "./components/FileUploader/DragAndDrop"
 
 import { userState, ifUserLoadingState } from "./states/UserState"
-import { imgPreviewCacheState } from "./states/ImgPreviewCacheState"
+import { fileFieldState, FileFieldValues } from "./states/FsPathState"
 
 
 
@@ -23,19 +23,21 @@ const App = () => {
 
 
   const [showDragAndDrop, setShowDragAndDrop] = useState(false)
-
-  const setImgPreviewCache = useSetAtom(imgPreviewCacheState)
-
+  const setFileField = useSetAtom(fileFieldState)
   const setUser = useSetAtom(userState)
   const setIfUserLoading = useSetAtom(ifUserLoadingState)
   
   useEffect(() => {
-    loadCurrentUser()
+    
 
-    return () => {
-      setImgPreviewCache([])
+    const fileFieldRetrieved = sessionStorage.getItem("fileField")
+    if (fileFieldRetrieved) {
+      if (Object.values(FileFieldValues).includes(fileFieldRetrieved as FileFieldValues) ) {
+        setFileField(fileFieldRetrieved as FileFieldValues)
+      }
     }
 
+    loadCurrentUser()
   }, [])
 
 
