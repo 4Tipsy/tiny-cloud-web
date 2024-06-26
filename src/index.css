@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+body {
+  overflow: hidden;
+}
+
+/* why not lol */
+.center-div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+:root {
+  --header-height: 100px;
+  --fz1: max(19px, 1.7vw);
+  --fz2: max(12px, 1.1vw);
+  --fz3: max(12px, 0.8vw);
+}
