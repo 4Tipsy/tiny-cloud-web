@@ -20,7 +20,7 @@ import TemporaryIco from "../../assets/icons/temporary-ico.svg?react"
 import SharedIco from "../../assets/icons/shared-ico.svg?react"
 import TrashBoxIco from "../../assets/icons/trash-box-ico.svg?react"
 
-import SettingsIco from "../../assets/icons/settings_1.svg?react"
+import ApiIco from "../../assets/icons/api-icon.svg?react"
 import GithubIco from "../../assets/icons/github.svg?react"
 import RocketIco from "../../assets/icons/rocket-ico.svg?react"
 
@@ -118,8 +118,8 @@ const GeneralSegment = () => {
 
       <div className="text-[length:var(--fz2)] flex flex-col justify-between h-[27%]">
         <div className="flex flex-row items-center text-ntw cursor-pointer hover:underline">
-          <SettingsIco/>
-          <div className="ml-1">Settings</div>
+          <ApiIco/>
+          <a href={window.LINK_TO_API_DOCS} className="ml-1">API docs (routes)</a>
         </div>
 
         <div className="flex flex-row items-center text-ntw">
