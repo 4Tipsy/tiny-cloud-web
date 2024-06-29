@@ -105,7 +105,7 @@ const ImgViewer = () => {
         backgroundPositionX: `calc(${-zoomOnImgCords[0] * zoomLevel}px + ${zoomCssSize} / 2)`,
         backgroundPositionY: `calc(${-zoomOnImgCords[1] * zoomLevel}px + ${zoomCssSize} / 2)`,
 
-        backgroundImage: `url(${urlToImg})`,
+        backgroundImage: `url('${urlToImg}')`,
         backgroundSize: `${imgSize[0] * zoomLevel}px ${imgSize[1] * zoomLevel}px`,
       }}/>
 
