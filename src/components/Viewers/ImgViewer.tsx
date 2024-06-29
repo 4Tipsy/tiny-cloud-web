@@ -32,13 +32,7 @@ const ImgViewer = () => {
 
 
 
-  let urlToImg: string
-  if (imgViewerContent) {
-
-    urlToImg = window.SERVER_RAW_URL+`/api/utils-service/download-img-via-get-route?abs_path=${imgViewerContent?.abs_path}&file_field=${fileField.toLowerCase()}`
-  } else {
-    urlToImg = ''
-  }
+  const _imgUrl = imgViewerContent ? window.SERVER_RAW_URL+`/api/utils-service/download-img-via-get-route?abs_path=${imgViewerContent?.abs_path}&file_field=${fileField.toLowerCase()}` : '___'
 
 
   return (
@@ -51,7 +45,7 @@ const ImgViewer = () => {
 
       <div className="max-w-[80%] max-h-[80%] object-contain center-div">
         <img alt={imgViewerContent?.name} className="max-h-full max-w-full"
-          src={urlToImg}
+          src={_imgUrl}
 
           onMouseEnter={ e => {
             setShowZoom(true)
@@ -105,7 +99,7 @@ const ImgViewer = () => {
         backgroundPositionX: `calc(${-zoomOnImgCords[0] * zoomLevel}px + ${zoomCssSize} / 2)`,
         backgroundPositionY: `calc(${-zoomOnImgCords[1] * zoomLevel}px + ${zoomCssSize} / 2)`,
 
-        backgroundImage: `url('https://storage.dyor.io/jettons/images/1713301438/73449399.webp')`,
+        backgroundImage: `url('${_imgUrl}')`,
         backgroundSize: `${imgSize[0] * zoomLevel}px ${imgSize[1] * zoomLevel}px`,
       }}/>
 
